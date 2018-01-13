@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "253406166747",
+    "firebase_url": "https://safetalk-45195.firebaseio.com",
+    "project_id": "safetalk-45195",
+    "storage_bucket": "safetalk-45195.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:253406166747:android:6cb514144fd84a08",
+        "android_client_info": {
+          "package_name": "com.nwhacks.safetalk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "253406166747-atj8jahcd5t4v7dmdvja0f53lkgsf2rj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxQGLwQHViRcb6K_cuDNRiN6HQO55qAnk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
