@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private LocationRequest mLocationRequest;
     private AddressResultReceiver mResultReceiver;
 
+    private FloatingActionButton addFriends;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -300,9 +302,18 @@ public class MainActivity extends AppCompatActivity {
                     " need of assistance." +
                     " They are currently at " + currentUser.getUserLocation().getAddress());
         }
-        sendSMS("2502022408","Braeden" + " is in" +
+        sendSMS("2502024783","Braeden" + " is in" +
+
                 " need of assistance." +
                 " They are currently at " + currentUser.getUserLocation().getAddress());
     }
+
+    public void onAddFriendsClick(View view){
+        Intent changeActivityIntent = new Intent(this, AddFriends.class);
+        startActivity(changeActivityIntent);
+    }
+
+
+
 
 }
