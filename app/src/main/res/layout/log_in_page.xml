@@ -35,11 +35,12 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView"
-        app:layout_constraintTop_toTopOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="0dp"
+        android:layout_width="111dp"
         android:layout_height="40dp"
         android:layout_marginBottom="102dp"
         android:layout_marginEnd="36dp"
@@ -53,9 +54,9 @@
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="0dp"
-        android:layout_height="41dp"
-        android:layout_marginStart="38dp"
+        android:layout_width="111dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="36dp"
         android:layout_marginTop="36dp"
         android:text="Password:"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
@@ -98,12 +99,12 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonlogin" />
 
     <EditText
-        android:id="@+id/TextPassword"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
+        android:id="@+id/"
+        android:layout_width="152dp"
+        android:layout_height="0dp"
         android:ems="10"
         android:inputType="textPassword"
-        tools:layout_editor_absoluteX="193dp"
-        tools:layout_editor_absoluteY="293dp" />
+        tools:layout_editor_absoluteX="202dp"
+        tools:layout_editor_absoluteY="299dp" />
 
 </android.support.constraint.ConstraintLayout>

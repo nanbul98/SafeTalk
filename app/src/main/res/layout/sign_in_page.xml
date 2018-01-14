@@ -46,7 +46,7 @@
         android:layout_height="31dp"
         android:layout_marginEnd="54dp"
         android:layout_marginStart="16dp"
-        android:text="Email"
+        android:text="Email:"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -59,7 +59,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:text="Password"
+        android:text="Password:"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18dp"
         app:layout_constraintBottom_toBottomOf="@+id/editTextPassword"
@@ -95,11 +95,11 @@
 
     <TextView
         android:id="@+id/textViewPhoneNumber"
-        android:layout_width="wrap_content"
+        android:layout_width="124dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
-        android:text="Phone \nNumber"
+        android:text="Phone"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -121,7 +121,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="34dp"
         android:layout_marginEnd="16dp"
-        android:text="Full Name"
+        android:text="Full Name:"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18dp"
         app:layout_constraintBottom_toTopOf="@+id/textViewEmail"
@@ -138,5 +138,15 @@
         app:layout_constraintBottom_toBottomOf="@+id/textViewName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textViewName" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:text="Number:"
+        android:textSize="18dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="316dp" />
 
 </android.support.constraint.ConstraintLayout>
