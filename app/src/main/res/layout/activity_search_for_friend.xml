@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.nwhacks.safetalk.SearchForFriend">
+    tools:context="com.nwhacks.safetalk.AddFriends">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -13,6 +13,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_add_friends" />
+    <include layout="@layout/content_search_for_friend" />
 
 </android.support.design.widget.CoordinatorLayout>
