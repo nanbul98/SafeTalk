@@ -16,11 +16,13 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.TextView;
 
 public class AddFriends extends AppCompatActivity implements SearchView.OnQueryTextListener{
 
     private Toolbar search_toolbar;
     private ListView search_listView;
+    private TextView hint_message;
     private String TAG = AddFriends.class.getSimpleName();
     private ArrayAdapter<String> adaptingLister;
     private String names[] = {"Test", "another test", "oh"};
@@ -33,6 +35,8 @@ public class AddFriends extends AppCompatActivity implements SearchView.OnQueryT
         searchDatabaseForUsers();
         initViews();
 
+        //Making list invisible initially to keep UI clean
+        search_listView.setAlpha(0);
     }
 
     //Want to find all users
@@ -47,8 +51,9 @@ public class AddFriends extends AppCompatActivity implements SearchView.OnQueryT
         adaptingLister = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, names);
         search_listView.setAdapter(adaptingLister);
 
-        setSupportActionBar(search_toolbar);
+        hint_message = (TextView) findViewById(R.id.HintText);
 
+        setSupportActionBar(search_toolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.app_name);
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -70,7 +75,14 @@ public class AddFriends extends AppCompatActivity implements SearchView.OnQueryT
     }
 
     public boolean onQueryTextChange(String changedString){
-        adaptingLister.getFilter().filter(changedString);
+        if (changedString.length() == 0){
+            search_listView.setAlpha(0);
+            hint_message.setAlpha(1);
+        } else {
+            search_listView.setAlpha(1);
+            hint_message.setAlpha(0);
+            adaptingLister.getFilter().filter(changedString);
+        }
         return true;
     }
 

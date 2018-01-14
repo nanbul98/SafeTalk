@@ -8,6 +8,12 @@
     tools:context="com.nwhacks.safetalk.AddFriends"
     tools:showIn="@layout/activity_add_friends">
 
+    <TextView
+        android:id="@+id/HintText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Please search to display users."/>
 
     <ListView
         android:id="@+id/SearchList"
@@ -22,5 +28,7 @@
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
         android:background="@color/colorPrimary" />
+
+
 
 </RelativeLayout>
