@@ -46,6 +46,7 @@ public class AddFriends extends AppCompatActivity implements SearchView.OnQueryT
         search_listView = (ListView) findViewById(R.id.SearchList);
         adaptingLister = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, names);
         search_listView.setAdapter(adaptingLister);
+
         setSupportActionBar(search_toolbar);
 
         ActionBar actionBar = getSupportActionBar();
