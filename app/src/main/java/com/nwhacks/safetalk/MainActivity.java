@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private String userId;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback callback;
+    private LocationRequest mLocationRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,40 +69,17 @@ public class MainActivity extends AppCompatActivity {
             userId = intent.getExtras().getString("id");
             Log.d("CREATION", "Made it here");
             mDatabase = FirebaseDatabase.getInstance().getReference();
+            locationSetup();
             retrieveUser();
         }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        try {
-            mFusedLocationClient.getLastLocation()
-                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                        @Override
-                        public void onSuccess(Location location) {
-                            // Got last known location. In some rare situations this can be null.
-                            if (location != null) {
-                                // Logic to handle location object
-                            }
-                        }
-                    });
-        }catch(SecurityException e){
-            Toast.makeText(getApplicationContext(), "Enable location permissions to use" +
-                            "SafeChat", Toast.LENGTH_LONG).show();
-            finish();
-            moveTaskToBack(true);
-        }
-        callback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                mDatabase.child("users").child(userId).child("userLocation")
-                        .setValue(locationResult.getLastLocation());
-            };
-        };
         Button helpButton = findViewById(R.id.helpButton);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                mLocationRequest = createDangerLocationRequest();
                 sendGroupSMS(user);
             }
         });
@@ -116,9 +94,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
     @Override
     public void onResume(){
         super.onResume();
+        startLocationUpdates();
     }
     private void retrieveUser(){
         mDatabase.addValueEventListener(new ValueEventListener() {
@@ -202,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         return mLocationRequest;
     }
 
-    private void startLocationUpdates(LocationRequest mLocationRequest) {
+    private void startLocationUpdates() {
         try {
             mFusedLocationClient.requestLocationUpdates(mLocationRequest,
                     callback,
@@ -210,6 +190,38 @@ public class MainActivity extends AppCompatActivity {
         }catch (SecurityException e){
 
         }
+    }
+    private void locationSetup(){
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{android.Manifest.permission.SEND_SMS,
+                        Manifest.permission.ACCESS_FINE_LOCATION},
+                1);
+        try {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                            }
+                        }
+                    });
+        }catch(SecurityException e){
+            Toast.makeText(getApplicationContext(), "Enable location permissions to use" +
+                    "SafeChat", Toast.LENGTH_LONG).show();
+            finish();
+            moveTaskToBack(true);
+        }
+        callback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                mDatabase.child("users").child(userId).child("userLocation")
+                        .setValue(locationResult.getLastLocation());
+            };
+        };
+        mLocationRequest = createStandardLocationRequest();
     }
 
     private void sendSMS(String phoneNo, String msg) {
@@ -231,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
                     " need of assistance." +
                     " They are currently at " + currentUser.getUserLocation());
         }
-        sendSMS("7783022456","Braeden" + " is in" +
+        sendSMS("2502022408","Braeden" + " is in" +
                 " need of assistance." +
                 " They are currently at " + currentUser.getUserLocation());
     }
