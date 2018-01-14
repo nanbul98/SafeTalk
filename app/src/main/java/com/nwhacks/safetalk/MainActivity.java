@@ -87,10 +87,7 @@ public class MainActivity extends AppCompatActivity {
                 sendGroupSMS(user);
             }
         });
-<<<<<<< HEAD
-        mAuth = FirebaseAuth.getInstance();
 
-=======
         Button logoutButton = findViewById(R.id.Logout);
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -101,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(launchSignUpPage);
             }
         });
->>>>>>> upstream/master
+
     }
 
     @Override
