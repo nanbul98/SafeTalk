@@ -40,7 +40,7 @@ public class User {
     public User(FirebaseUser user, List<User> userFriends, String phoneNumber, Location userLocation) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         this.userId = user.getUid();
-        this.email = user.getEmail();
+        this.email = new String(user.getEmail());
         this.userFriends = userFriends;
         this.phoneNumber = phoneNumber;
         if(userLocation == null){
@@ -48,9 +48,20 @@ public class User {
         }else {
             this.userLocation = new MyLocation(userLocation);
         }
-        mDatabase.child("users").child(userId).setValue(this);
+        mDatabase.child("SafeTalkUsers").child(userId).setValue(this);
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public List<User> getUserFriends() {
         return userFriends;
