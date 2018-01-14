@@ -33,6 +33,8 @@ public class User {
         this.userFriends = new ArrayList<>();
         this.phoneNumber = new String();
         this.userLocation = new MyLocation();
+        this.email = "";
+        this.name = "";
     }
 
     public User(FirebaseUser user, List<User> userFriends, String phoneNumber, Location userLocation) {
