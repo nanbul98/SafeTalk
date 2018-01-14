@@ -43,6 +43,9 @@ public class User {
         this.userFriends = userFriends;
         this.phoneNumber = phoneNumber;
         this.userLocation = userLocation;
+        if(userLocation == null){
+            this.userLocation = new Location("");
+        }
         mDatabase.child("users").child(userId).setValue(user);
     }
 
