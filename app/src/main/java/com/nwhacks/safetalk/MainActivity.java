@@ -1,7 +1,10 @@
 package com.nwhacks.safetalk;
 
+import android.*;
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
@@ -18,6 +21,12 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private User user;
     private String userId;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback callback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,20 +59,35 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{android.Manifest.permission.SEND_SMS},
+                new String[]{android.Manifest.permission.SEND_SMS,
+                        Manifest.permission.ACCESS_FINE_LOCATION},
                 1);
-        Log.d("CREATION", "fab not done");
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        try {
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                // Logic to handle location object
+                            }
+                        }
+                    });
+        }catch(SecurityException e){
+            Toast.makeText(getApplicationContext(), "Enable location permissions to use" +
+                            "SafeChat", Toast.LENGTH_LONG).show();
+            finish();
+            moveTaskToBack(true);
+        }
+        callback = new LocationCallback() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-        Log.d("CREATION", "fab done");
-
+            public void onLocationResult(LocationResult locationResult) {
+                mDatabase.child("users").child(userId).child("userLocation")
+                        .setValue(locationResult.getLastLocation());
+            };
+        };
         Button helpButton = findViewById(R.id.helpButton);
         helpButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,7 +96,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
+    @Override
+    public void onResume(){
+        super.onResume();
+    }
     private void retrieveUser(){
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -109,30 +138,6 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void sendGroupSMS(User currentUser) {
-        for(User friend: currentUser.getUserFriends()){
-            sendSMS(friend.getPhoneNumber(),currentUser.getUser().getDisplayName() + " is in" +
-                    " need of assistance." +
-                    " They are currently at " + currentUser.getUserLocation());
-        }
-        sendSMS("2502022408","Braeden" + " is in" +
-                " need of assistance." +
-                " They are currently at " + currentUser.getUserLocation());
-    }
-
-    private void sendSMS(String phoneNo, String msg) {
-        try {
-            SmsManager smsManager = SmsManager.getDefault();
-            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
-            Toast.makeText(getApplicationContext(), "Message Sent",
-                    Toast.LENGTH_LONG).show();
-        } catch (Exception ex) {
-            Toast.makeText(getApplicationContext(),ex.getMessage().toString(),
-                    Toast.LENGTH_LONG).show();
-            ex.printStackTrace();
-        }
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -149,7 +154,9 @@ public class MainActivity extends AppCompatActivity {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(MainActivity.this, "Permission denied to send SMS", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Permissions are required!", Toast.LENGTH_SHORT).show();
+                    finish();
+                    moveTaskToBack(true);
                 }
                 return;
             }
@@ -158,4 +165,55 @@ public class MainActivity extends AppCompatActivity {
             // permissions this app might request
         }
     }
+
+    private LocationRequest createDangerLocationRequest() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        return mLocationRequest;
+    }
+
+    private LocationRequest createStandardLocationRequest() {
+        LocationRequest mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(600000);
+        mLocationRequest.setFastestInterval(60000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        return mLocationRequest;
+    }
+
+    private void startLocationUpdates(LocationRequest mLocationRequest) {
+        try {
+            mFusedLocationClient.requestLocationUpdates(mLocationRequest,
+                    callback,
+                    null /* Looper */);
+        }catch (SecurityException e){
+
+        }
+    }
+
+    private void sendSMS(String phoneNo, String msg) {
+        try {
+            SmsManager smsManager = SmsManager.getDefault();
+            smsManager.sendTextMessage(phoneNo, null, msg, null, null);
+            Toast.makeText(getApplicationContext(), "Message Sent",
+                    Toast.LENGTH_LONG).show();
+        } catch (Exception ex) {
+            Toast.makeText(getApplicationContext(),ex.getMessage().toString(),
+                    Toast.LENGTH_LONG).show();
+            ex.printStackTrace();
+        }
+    }
+
+    private void sendGroupSMS(User currentUser) {
+        for(User friend: currentUser.getUserFriends()){
+            sendSMS(friend.getPhoneNumber(),currentUser.getUser().getDisplayName() + " is in" +
+                    " need of assistance." +
+                    " They are currently at " + currentUser.getUserLocation());
+        }
+        sendSMS("7783022456","Braeden" + " is in" +
+                " need of assistance." +
+                " They are currently at " + currentUser.getUserLocation());
+    }
+
 }
