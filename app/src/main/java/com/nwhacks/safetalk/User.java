@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.UUID;
 
 public class User {
-    private FirebaseUser user;
     private String userId;
+    private String email;
     private List<User> userFriends;
     private String phoneNumber;
-    private Location userLocation;
-
+    private MyLocation userLocation;
+    private String name;
 
     /**
      * Purpose: To create a new user object
@@ -32,30 +32,43 @@ public class User {
         this.userId = userId;
         this.userFriends = new ArrayList<>();
         this.phoneNumber = new String();
-        this.userLocation = new Location("");
-        mDatabase.child("users").child(userId).setValue(this);
+        this.userLocation = new MyLocation();
+        this.email = "";
+        this.name = "";
     }
 
     public User(FirebaseUser user, List<User> userFriends, String phoneNumber, Location userLocation) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        String userId = UUID.randomUUID().toString();
-        this.user = user;
-        this.userId = userId;
+        this.userId = user.getUid();
+        this.email = new String(user.getEmail());
         this.userFriends = userFriends;
         this.phoneNumber = phoneNumber;
-        this.userLocation = userLocation;
         if(userLocation == null){
-            this.userLocation = new Location("");
+            this.userLocation = new MyLocation();
+        }else {
+            this.userLocation = new MyLocation(userLocation);
         }
-        mDatabase.child("users").child(userId).setValue(this);
+        mDatabase.child("SafeTalkUsers").child(userId).setValue(this);
     }
 
-    public FirebaseUser getUser() {
-        return user;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public List<User> getUserFriends() {
         return userFriends;
+    }
+
+    public void setUserFriends(List<User> friends) {
+        this.userFriends = friends;
     }
 
     public String getPhoneNumber() {
@@ -64,9 +77,7 @@ public class User {
 
     public String getUserId() {return userId; }
 
-    public void setUser(FirebaseUser user) {
-        this.user = user;
-    }
+    public String getName() {return name;}
 
     public void addUserFriend(User friend) {
         this.userFriends.add(friend);
@@ -76,7 +87,7 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public Location getUserLocation() { return userLocation; }
+    public MyLocation getUserLocation() { return userLocation; }
 
-    public void setUserLocation(Location userLocation) { this.userLocation = userLocation; }
+    public void setUserLocation(MyLocation userLocation) { this.userLocation = userLocation; }
 }
