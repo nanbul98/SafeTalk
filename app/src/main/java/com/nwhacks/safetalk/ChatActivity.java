@@ -11,10 +11,10 @@ import com.google.firebase.database.DatabaseReference;
  * Created by Amanda on 2018-01-14.
  */
 
-<<<<<<< HEAD
+/*
 public class ChatActivity {
 
-=======
+
 public class ChatActivity extends AppCompatActivity {
 
     private String messageText;
@@ -99,5 +99,6 @@ public class ChatActivity extends AppCompatActivity {
 
     }
     
->>>>>>> 985d94049a1f9811533088696cd061d7fef2a36f
+
 }
+*/
