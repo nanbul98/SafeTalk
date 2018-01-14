@@ -8,7 +8,6 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -29,7 +28,6 @@ public class User {
      * @param userLocation contains the user's current location
      */
     public User(){
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String userId = UUID.randomUUID().toString();
         this.userId = userId;
         this.userFriends = new ArrayList<>();
