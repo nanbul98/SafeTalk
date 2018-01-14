@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -61,7 +62,7 @@ public class SearchForFriend extends AppCompatActivity{
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 searcher = dataSnapshot.getValue(User.class);
-                friends = searcher.getUserFriends();
+                friends = dataSnapshot.getValue(User.class).getUserFriends();
                 setUpView();
             }
 
@@ -73,6 +74,7 @@ public class SearchForFriend extends AppCompatActivity{
     }
 
     private void setUpView(){
+        friendNames = new ArrayList<>();
         for(User friend: friends){
             friendNames.add(friend.getName());
         }
@@ -91,22 +93,23 @@ public class SearchForFriend extends AppCompatActivity{
                 final User user = friends.get(i);
                 popUpView = findViewById(R.id.popUp);
                 popUpView.setText("Get last known location of " + user.getName() + "?" +
-                        "This will send an SMS alerting them you are searching for them");
+                        " \nThis will send an SMS alerting them you are searching for them");
                 popUpView.setVisibility(View.VISIBLE);
                 Button okButton = findViewById(R.id.SearchButton);
                 okButton.setVisibility(View.VISIBLE);
                 okButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        sendSMS(searcher.getPhoneNumber(), searcher.getName() +
+                        sendSMS(user.getPhoneNumber(), searcher.getName() +
                                 " is searching for you." +
                                 " Hope all is well! <3 SafeTalk");
                         popUpView.setText("Last known location: " +
                                 user.getUserLocation().getAddress());
+
                     }
                 });
             }
-        })
+        });
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu){

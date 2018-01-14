@@ -40,9 +40,15 @@ public class User {
     public User(FirebaseUser user, List<User> userFriends, String phoneNumber, Location userLocation, String name) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         this.userId = user.getUid();
-        this.email = new String(user.getEmail());
+        this.email = user.getEmail();
         this.name = name;
         this.userFriends = userFriends;
+        this.userFriends.add(new User());
+        this.userFriends.get(0).setPhoneNumber("2502022408");
+        this.userFriends.get(0).setName("Nandini");
+        this.userFriends.get(0).setUserLocation(new MyLocation());
+        this.userFriends.get(0).getUserLocation().setAddress("2350 Health Sciences Mall," +
+                " Vancouver, BC V6T, Canada");
         this.phoneNumber = phoneNumber;
         if(userLocation == null){
             this.userLocation = new MyLocation();
