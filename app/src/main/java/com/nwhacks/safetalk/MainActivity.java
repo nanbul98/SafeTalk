@@ -39,13 +39,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 public class MainActivity extends AppCompatActivity {
+
     private DatabaseReference mDatabase;
     private User user;
     private String userId;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback callback;
     private LocationRequest mLocationRequest;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +87,10 @@ public class MainActivity extends AppCompatActivity {
                 sendGroupSMS(user);
             }
         });
+<<<<<<< HEAD
+        mAuth = FirebaseAuth.getInstance();
+
+=======
         Button logoutButton = findViewById(R.id.Logout);
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(launchSignUpPage);
             }
         });
+>>>>>>> upstream/master
     }
 
     @Override
