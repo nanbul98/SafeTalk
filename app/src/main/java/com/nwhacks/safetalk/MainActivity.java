@@ -36,6 +36,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private User user;
@@ -46,6 +49,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        Log.d("Whoops", "Whoops");
+        if (currentUser == null) {
+            Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
+            startActivity(launchSignUpPage);
+        } 
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         Intent intent = getIntent();
         if(intent.getExtras() == null){
             Log.d("CREATION", "null intent");
