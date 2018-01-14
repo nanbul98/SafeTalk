@@ -38,6 +38,7 @@ public class loginActivity extends AppCompatActivity implements View.OnClickList
     public void mainPageRunner() {
         Intent launchMainPage = new Intent(loginActivity.this, MainActivity.class);
         FirebaseUser fireUser = mAuth.getCurrentUser();
+        Log.d("hi", fireUser.getUid());
         launchMainPage.putExtra("id", fireUser.getUid());
         startActivity(launchMainPage);
     }

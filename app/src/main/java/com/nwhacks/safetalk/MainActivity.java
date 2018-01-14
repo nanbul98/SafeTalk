@@ -60,29 +60,24 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        Log.d("Whoops", "Whoops");
         Intent intent = getIntent();
         if(intent.getExtras() == null){
             Log.d("CREATION", "null intent");
             if(savedInstanceState == null){
-                Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
-                startActivity(launchSignUpPage);
+                Intent launchLoginPage = new Intent(MainActivity.this, loginActivity.class);
+                startActivity(launchLoginPage);
             }else {
                 userId = savedInstanceState.getString("id");
                 mDatabase = FirebaseDatabase.getInstance().getReference();
-                locationSetup();
                 retrieveUser();
             }
         }else {
             userId = intent.getExtras().getString("id");
             mDatabase = FirebaseDatabase.getInstance().getReference();
-            locationSetup();
             retrieveUser();
-            Log.d("CREATION", userId);
             savedInstanceState = new Bundle();
             savedInstanceState.putString("id", userId);
         }
-        mResultReceiver = new AddressResultReceiver(new Handler());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -100,8 +95,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 mAuth.signOut();
                 Log.d("CREATION", "logout");
-                Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
-                startActivity(launchSignUpPage);
+                Intent launchLoginPage = new Intent(MainActivity.this, loginActivity.class);
+                startActivity(launchLoginPage);
             }
         });
     }
@@ -111,8 +106,8 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser == null) {
-            Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
-            startActivity(launchSignUpPage);
+            Intent launchLoginPage = new Intent(MainActivity.this, loginActivity.class);
+            startActivity(launchLoginPage);
         }else {
             try {
                 startLocationUpdates();
@@ -122,31 +117,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void retrieveUser(){
-        Query findUser = mDatabase.child("SafeTalkUsers").orderByChild("userId").equalTo(userId);
-        findUser.addChildEventListener(new ChildEventListener() {
+        DatabaseReference ref = mDatabase.child("SafeTalkUsers").child(userId);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String string) {
-                Log.d("RETRIEVAL", "Worked");
+            public void onDataChange(DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
+                locationSetup();
+                mResultReceiver = new AddressResultReceiver(new Handler());
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-            }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
             }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String string) {
-                user = dataSnapshot.getValue(User.class);
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String string) {
-            }
-
         });
     }
     @Override
@@ -200,6 +183,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onStop(){
+        super.onStop();
+        mAuth.signOut();
+    }
     private LocationRequest createDangerLocationRequest() {
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
@@ -302,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                     " need of assistance." +
                     " They are currently at " + currentUser.getUserLocation().getAddress());
         }
-        sendSMS("2502024783","Braeden" + " is in" +
+        sendSMS("2502024783",currentUser.getName() + " is in" +
 
                 " need of assistance." +
                 " They are currently at " + currentUser.getUserLocation().getAddress());
