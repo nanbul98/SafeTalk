@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,6 +23,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -48,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback callback;
     private LocationRequest mLocationRequest;
+    private AddressResultReceiver mResultReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
             savedInstanceState = new Bundle();
             savedInstanceState.putString("id", userId);
         }
+        mResultReceiver = new AddressResultReceiver(new Handler());
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -248,10 +253,33 @@ public class MainActivity extends AppCompatActivity {
                 mDatabase.child("users").child(userId).child("userLocation")
                         .setValue(locationResult.getLastLocation());
                 user.setUserLocation(new MyLocation(locationResult.getLastLocation()));
+                startIntentService(locationResult.getLastLocation());
             };
         };
         mLocationRequest = createStandardLocationRequest();
     }
+
+    protected void startIntentService(Location location) {
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, location);
+        startService(intent);
+    }
+
+    private class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            // Display the address string
+            // or an error message sent from the intent service.
+            user.getUserLocation().setAddress(resultData.getString(Constants.RESULT_DATA_KEY));
+        }
+    }
+
 
     private void sendSMS(String phoneNo, String msg) {
         try {
@@ -270,11 +298,11 @@ public class MainActivity extends AppCompatActivity {
         for(User friend: currentUser.getUserFriends()){
             sendSMS(friend.getPhoneNumber(),currentUser.getName() + " is in" +
                     " need of assistance." +
-                    " They are currently at " + currentUser.getUserLocation());
+                    " They are currently at " + currentUser.getUserLocation().getAddress());
         }
         sendSMS("2502022408","Braeden" + " is in" +
                 " need of assistance." +
-                " They are currently at " + currentUser.getUserLocation());
+                " They are currently at " + currentUser.getUserLocation().getAddress());
     }
 
 }
