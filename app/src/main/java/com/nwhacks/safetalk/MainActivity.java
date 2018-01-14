@@ -36,6 +36,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private User user;
@@ -47,6 +50,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{android.Manifest.permission.SEND_SMS,
+                        Manifest.permission.ACCESS_FINE_LOCATION},
+                1);
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        Log.d("Whoops", "Whoops");
+        if (currentUser == null) {
+            Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
+            startActivity(launchSignUpPage);
+        }
         Intent intent = getIntent();
         if(intent.getExtras() == null){
             Log.d("CREATION", "null intent");
@@ -67,6 +81,16 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 mLocationRequest = createDangerLocationRequest();
                 sendGroupSMS(user);
+            }
+        });
+        Button logoutButton = findViewById(R.id.Logout);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signOut();
+                Log.d("CREATION", "logout");
+                Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
+                startActivity(launchSignUpPage);
             }
         });
     }
