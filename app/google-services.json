@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "253406166747",
-    "firebase_url": "https://safetalk-45195.firebaseio.com",
-    "project_id": "safetalk-45195",
-    "storage_bucket": "safetalk-45195.appspot.com"
+    "project_number": "721296351703",
+    "firebase_url": "https://safetalk-51b03.firebaseio.com",
+    "project_id": "safetalk-51b03",
+    "storage_bucket": "safetalk-51b03.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:253406166747:android:6cb514144fd84a08",
+        "mobilesdk_app_id": "1:721296351703:android:28e5db07374e13ea",
         "android_client_info": {
           "package_name": "com.nwhacks.safetalk"
         }
       },
       "oauth_client": [
         {
-          "client_id": "253406166747-atj8jahcd5t4v7dmdvja0f53lkgsf2rj.apps.googleusercontent.com",
+          "client_id": "721296351703-6pfjibi9mr2olfgt8jvjpa6t4snervon.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAxQGLwQHViRcb6K_cuDNRiN6HQO55qAnk"
+          "current_key": "AIzaSyCH69p8d55sQwS9SSvlLh6NrDWRlBySvOs"
         }
       ],
       "services": {
