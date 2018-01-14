@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
     private void retrieveUser(){
-        Query findUser = mDatabase.child("users").orderByChild("userId").equalTo(userId);
+        Query findUser = mDatabase.child("SafeTalkUsers").orderByChild("userId").equalTo(userId);
         findUser.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String string) {
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
         callback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                mDatabase.child("users").child(userId).child("userLocation")
+                mDatabase.child("SafeTalkUsers").child(userId).child("userLocation")
                         .setValue(locationResult.getLastLocation());
                 user.setUserLocation(new MyLocation(locationResult.getLastLocation()));
                 startIntentService(locationResult.getLastLocation());
