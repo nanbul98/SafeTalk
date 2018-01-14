@@ -37,10 +37,11 @@ public class User {
         this.name = "";
     }
 
-    public User(FirebaseUser user, List<User> userFriends, String phoneNumber, Location userLocation) {
+    public User(FirebaseUser user, List<User> userFriends, String phoneNumber, Location userLocation, String name) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         this.userId = user.getUid();
         this.email = new String(user.getEmail());
+        this.name = name;
         this.userFriends = userFriends;
         this.phoneNumber = phoneNumber;
         if(userLocation == null){
@@ -59,6 +60,8 @@ public class User {
         this.email = email;
     }
 
+    public String getName() {return name;}
+
     public void setName(String name) {
         this.name = name;
     }
@@ -76,8 +79,6 @@ public class User {
     }
 
     public String getUserId() {return userId; }
-
-    public String getName() {return name;}
 
     public void addUserFriend(User friend) {
         this.userFriends.add(friend);
