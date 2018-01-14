@@ -5,5 +5,5 @@ package com.nwhacks.safetalk;
  */
 
 public class ChatActivity {
-    
+
 }
