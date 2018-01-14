@@ -11,8 +11,11 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.tasks.OnCompleteListener;
+
+import java.util.HashSet;
 
 /**
  * Created by nandinibulusu on 2018-01-13.
@@ -57,7 +60,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         //getting email and password
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-        String phoneNumber = editTextPhoneNumber.getText().toString().trim();
+        final String phoneNumber = editTextPhoneNumber.getText().toString().trim();
 
         if(TextUtils.isEmpty(email)) {
             Toast.makeText(this,"Please enter email", Toast.LENGTH_LONG).show();
@@ -69,7 +72,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
 
 
         //creating a new user
-        mAuth.createUserWithEmailAndPassword("user email here", "user password here")
+        mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -77,9 +80,11 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             //does something
                             Toast.makeText(SignUpActivity.this,"You have successfully registered!", Toast.LENGTH_LONG).show();
                             FirebaseUser fireUser = mAuth.getCurrentUser();
+                            User user = new User(fireUser, new HashSet<User>(), phoneNumber, null);
                         } else {
+                            FirebaseAuthException e = (FirebaseAuthException)task.getException();
                             //does something else
-                            Toast.makeText(SignUpActivity.this,"Whoops! There's a registration error!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(SignUpActivity.this, "Failed Registration: "+e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 } );

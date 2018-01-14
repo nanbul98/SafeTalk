@@ -43,7 +43,7 @@ public class User {
         this.userFriends = userFriends;
         this.phoneNumber = phoneNumber;
         this.userLocation = userLocation;
-        mDatabase.child("users").child(userId).setValue(user);
+        mDatabase.child("users").child(userId).setValue(this);
     }
 
     public FirebaseUser getUser() {

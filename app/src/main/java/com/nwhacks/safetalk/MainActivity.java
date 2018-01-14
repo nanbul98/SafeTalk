@@ -49,14 +49,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityCompat.requestPermissions(MainActivity.this,
+                new String[]{android.Manifest.permission.SEND_SMS,
+                        Manifest.permission.ACCESS_FINE_LOCATION},
+                1);
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         Log.d("Whoops", "Whoops");
         if (currentUser == null) {
             Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
             startActivity(launchSignUpPage);
-        } 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        }
         Intent intent = getIntent();
         if(intent.getExtras() == null){
             Log.d("CREATION", "null intent");
@@ -71,10 +74,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{android.Manifest.permission.SEND_SMS,
-                        Manifest.permission.ACCESS_FINE_LOCATION},
-                1);
         try {
             mFusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, new OnSuccessListener<Location>() {
