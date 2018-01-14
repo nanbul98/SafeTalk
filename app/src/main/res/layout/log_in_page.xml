@@ -37,19 +37,6 @@
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView" />
 
-    <EditText
-        android:id="@+id/TextPassword"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="41dp"
-        android:layout_marginTop="36dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:textSize="18dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView2"
-        app:layout_constraintTop_toBottomOf="@+id/TextEmail" />
-
     <TextView
         android:id="@+id/textView"
         android:layout_width="0dp"
@@ -58,7 +45,7 @@
         android:layout_marginEnd="36dp"
         android:layout_marginStart="38dp"
         android:text="Email:"
-        android:textSize="18dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintBottom_toTopOf="@+id/buttonlogin"
         app:layout_constraintEnd_toStartOf="@+id/TextEmail"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,12 +55,10 @@
         android:id="@+id/textView2"
         android:layout_width="0dp"
         android:layout_height="41dp"
-        android:layout_marginEnd="38dp"
         android:layout_marginStart="38dp"
         android:layout_marginTop="36dp"
         android:text="Password:"
-        android:textSize="18dp"
-        app:layout_constraintEnd_toStartOf="@+id/TextPassword"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -111,5 +96,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonlogin" />
+
+    <EditText
+        android:id="@+id/TextPassword"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPassword"
+        tools:layout_editor_absoluteX="193dp"
+        tools:layout_editor_absoluteY="293dp" />
 
 </android.support.constraint.ConstraintLayout>
