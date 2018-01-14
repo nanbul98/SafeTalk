@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
->
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:layout_editor_absoluteY="81dp">
+
     <ImageView
         android:id="@+id/imageViewLogo"
         android:layout_width="101dp"
-        android:layout_height="71dp"
-        android:layout_marginBottom="76dp"
-        android:layout_marginTop="78dp"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextEmail"
+        android:layout_height="0dp"
+        android:layout_marginBottom="18dp"
+        android:layout_marginTop="14dp"
+        app:layout_constraintBottom_toTopOf="@+id/editTextName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewSafeTalk"
         app:srcCompat="@drawable/stlogo" />
 
     <EditText
@@ -19,18 +23,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="40dp"
-        android:layout_marginTop="179dp"
+        android:layout_marginTop="19dp"
         android:ems="10"
         android:inputType="textEmailAddress"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textViewEmail"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextName" />
 
     <EditText
         android:id="@+id/editTextPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="24dp"
         android:ems="10"
         android:inputType="textPassword"
         app:layout_constraintStart_toStartOf="@+id/editTextPhoneNumber"
@@ -40,17 +44,15 @@
         android:id="@+id/textViewEmail"
         android:layout_width="0dp"
         android:layout_height="31dp"
-        android:layout_marginBottom="130dp"
         android:layout_marginEnd="54dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="130dp"
         android:text="Email"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18dp"
-        app:layout_constraintBottom_toBottomOf="@+id/editTextPassword"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/editTextEmail"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewSafeTalk" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/textViewPassword"
@@ -64,31 +66,17 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView3"
-        android:layout_width="0dp"
-        android:layout_height="47dp"
-        android:layout_marginEnd="31dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="19dp"
-        android:text="Confirm \nPassword"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-        android:textSize="18dp"
-        app:layout_constraintEnd_toStartOf="@+id/editTextConfirmPassword"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewPassword" />
-
-    <TextView
         android:id="@+id/textViewSafeTalk"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="14dp"
+        android:layout_marginTop="30dp"
         android:fontFamily="Arial"
         android:text="Safe Talk"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="25dp"
-        app:layout_constraintBottom_toTopOf="@+id/imageViewLogo"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/buttonSignUp"
@@ -96,19 +84,21 @@
         android:layout_width="61dp"
         android:layout_height="28dp"
         android:layout_marginBottom="36dp"
+        android:layout_marginTop="33dp"
         android:background="#FD7C6E"
         android:text="Sign Up"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
 
     <TextView
         android:id="@+id/textViewPhoneNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="20dp"
         android:text="Phone \nNumber"
         android:textAppearance="@style/TextAppearance.AppCompat.Body2"
         android:textSize="18dp"
@@ -119,22 +109,34 @@
         android:id="@+id/editTextPhoneNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="18dp"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:inputType="number"
         app:layout_constraintStart_toStartOf="@+id/editTextEmail"
         app:layout_constraintTop_toBottomOf="@+id/editTextEmail" />
 
-    <EditText
-        android:id="@+id/editTextConfirmPassword"
+    <TextView
+        android:id="@+id/textViewName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="40dp"
-        android:layout_marginTop="19dp"
+        android:layout_marginBottom="34dp"
+        android:layout_marginEnd="16dp"
+        android:text="Full Name"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewEmail"
+        app:layout_constraintEnd_toStartOf="@+id/editTextName"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
         android:ems="10"
-        android:inputType="textPassword"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewName"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView3"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPassword" />
+        app:layout_constraintStart_toEndOf="@+id/textViewName" />
 
 </android.support.constraint.ConstraintLayout>
