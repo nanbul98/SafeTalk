@@ -7,8 +7,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class User {
@@ -27,7 +28,6 @@ public class User {
      * @param userLocation contains the user's current location
      */
     public User(){
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String userId = UUID.randomUUID().toString();
         this.userId = userId;
         this.userFriends = new ArrayList<>();
@@ -58,12 +58,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+        this.name = name;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> nameUpdates = new HashMap<String, Object>();
+        nameUpdates.put("email", email);
+        mDatabase.updateChildren(nameUpdates);
     }
 
     public String getName() {return name;}
 
     public void setName(String name) {
         this.name = name;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> nameUpdates = new HashMap<String, Object>();
+        nameUpdates.put("name", name);
+        mDatabase.updateChildren(nameUpdates);
     }
 
     public List<User> getUserFriends() {
@@ -72,6 +81,10 @@ public class User {
 
     public void setUserFriends(List<User> friends) {
         this.userFriends = friends;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> friendUpdates = new HashMap<String, Object>();
+        friendUpdates.put("userFriends", friends);
+        mDatabase.updateChildren(friendUpdates);
     }
 
     public String getPhoneNumber() {
@@ -82,13 +95,27 @@ public class User {
 
     public void addUserFriend(User friend) {
         this.userFriends.add(friend);
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> friendUpdates = new HashMap<String, Object>();
+        friendUpdates.put("userFriends", this.userFriends);
+        mDatabase.updateChildren(friendUpdates);
     }
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> phoUpdates = new HashMap<String, Object>();
+        phoUpdates.put("phoneNumber", phoneNumber);
+        mDatabase.updateChildren(phoUpdates);
     }
 
     public MyLocation getUserLocation() { return userLocation; }
 
-    public void setUserLocation(MyLocation userLocation) { this.userLocation = userLocation; }
+    public void setUserLocation(MyLocation userLocation) {
+        this.userLocation = userLocation;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> locUpdates = new HashMap<String, Object>();
+        locUpdates.put("userLocation", userLocation);
+        mDatabase.updateChildren(locUpdates);
+    }
 }
