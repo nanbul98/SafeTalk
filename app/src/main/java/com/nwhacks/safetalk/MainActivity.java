@@ -42,23 +42,13 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
-<<<<<<< HEAD
-    private FirebaseAuth mAuth;
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        // Check if user is signed in (non-null) and update UI accordingly.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        updateUI(currentUser);
-    }
-=======
     private DatabaseReference mDatabase;
     private User user;
     private String userId;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback callback;
->>>>>>> upstream/master
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{android.Manifest.permission.SEND_SMS,
                         Manifest.permission.ACCESS_FINE_LOCATION},
                 1);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         Log.d("Whoops", "Whoops");
         if (currentUser == null) {
@@ -119,8 +109,21 @@ public class MainActivity extends AppCompatActivity {
                 sendGroupSMS(user);
             }
         });
+<<<<<<< HEAD
         mAuth = FirebaseAuth.getInstance();
 
+=======
+        Button logoutButton = findViewById(R.id.Logout);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signOut();
+                Log.d("CREATION", "logout");
+                Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
+                startActivity(launchSignUpPage);
+            }
+        });
+>>>>>>> upstream/master
     }
     @Override
     public void onResume(){

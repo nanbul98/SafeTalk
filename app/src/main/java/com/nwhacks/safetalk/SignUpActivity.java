@@ -1,4 +1,5 @@
 package com.nwhacks.safetalk;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -15,6 +16,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.android.gms.tasks.OnCompleteListener;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 
 /**
@@ -80,7 +82,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             //does something
                             Toast.makeText(SignUpActivity.this,"You have successfully registered!", Toast.LENGTH_LONG).show();
                             FirebaseUser fireUser = mAuth.getCurrentUser();
-                            User user = new User(fireUser, new HashSet<User>(), phoneNumber, null);
+                            User user = new User(fireUser, new ArrayList<User>(), phoneNumber, null);
+                            Intent launchMainPage = new Intent(SignUpActivity.this, MainActivity.class);
+                            launchMainPage.putExtra("id", user.getUserId());
+                            startActivity(launchMainPage);
                         } else {
                             FirebaseAuthException e = (FirebaseAuthException)task.getException();
                             //does something else
