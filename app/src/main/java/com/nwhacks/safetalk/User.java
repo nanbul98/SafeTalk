@@ -6,14 +6,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 public class User {
     private FirebaseUser user;
     private String userId;
-    private Set<User> userFriends;
+    private List<User> userFriends;
     private String phoneNumber;
     private Location userLocation;
 
@@ -30,12 +31,12 @@ public class User {
         String userId = UUID.randomUUID().toString();
         mDatabase.child("users").child(userId).setValue(user);
         this.userId = userId;
-        this.userFriends = new HashSet<User>();
+        this.userFriends = new ArrayList<>();
         this.phoneNumber = new String();
         this.userLocation = new Location("");
     }
 
-    public User(FirebaseUser user, Set<User> userFriends, String phoneNumber, Location userLocation) {
+    public User(FirebaseUser user, List<User> userFriends, String phoneNumber, Location userLocation) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String userId = UUID.randomUUID().toString();
         this.user = user;
@@ -50,7 +51,7 @@ public class User {
         return user;
     }
 
-    public Set<User> getUserFriends() {
+    public List<User> getUserFriends() {
         return userFriends;
     }
 

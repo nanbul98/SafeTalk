@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{android.Manifest.permission.SEND_SMS,
                         Manifest.permission.ACCESS_FINE_LOCATION},
                 1);
-        FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         Log.d("Whoops", "Whoops");
         if (currentUser == null) {
@@ -103,6 +103,16 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 sendGroupSMS(user);
+            }
+        });
+        Button logoutButton = findViewById(R.id.Logout);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signOut();
+                Log.d("CREATION", "logout");
+                Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
+                startActivity(launchSignUpPage);
             }
         });
     }
