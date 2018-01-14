@@ -9,12 +9,18 @@
     tools:showIn="@layout/activity_add_friends">
 
 
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
+    <Toolbar
+        android:id="@+id/tb_toolbarsearch"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Button"
-        tools:layout_editor_absoluteX="279dp"
-        tools:layout_editor_absoluteY="16dp" />
+        android:background="@color/colorPrimary"
+        />
+
+    <ListView
+        android:id="@+id/lv_toolbarsearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tb_toolbarsearch"
+        ></ListView>
 
 </android.support.constraint.ConstraintLayout>
