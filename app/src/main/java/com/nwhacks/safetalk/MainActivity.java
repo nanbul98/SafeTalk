@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private AddressResultReceiver mResultReceiver;
 
     private FloatingActionButton addFriends;
+    private FloatingActionButton searchForFriend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +98,15 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("CREATION", "logout");
                 Intent launchLoginPage = new Intent(MainActivity.this, loginActivity.class);
                 startActivity(launchLoginPage);
+            }
+        });
+        searchForFriend = findViewById(R.id.SearchForFriends);
+        searchForFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent launchSearchPage = new Intent(MainActivity.this, SearchForFriend.class);
+                launchSearchPage.putExtra("id", user.getUserId());
+                startActivity(launchSearchPage);
             }
         });
     }

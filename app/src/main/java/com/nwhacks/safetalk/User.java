@@ -94,11 +94,13 @@ public class User {
     public String getUserId() {return userId; }
 
     public void addUserFriend(User friend) {
-        this.userFriends.add(friend);
+
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        Map<String, Object> friendUpdates = new HashMap<String, Object>();
-        friendUpdates.put("userFriends", this.userFriends);
-        mDatabase.updateChildren(friendUpdates);
+        if(this.userFriends.isEmpty()){
+            mDatabase.child("users").child("userFriends").setValue(this.userFriends);
+        }
+        this.userFriends.add(friend);
+        mDatabase.child("users").child("userFriends").push().setValue(friend);
     }
 
     public void setPhoneNumber(String phoneNumber) {

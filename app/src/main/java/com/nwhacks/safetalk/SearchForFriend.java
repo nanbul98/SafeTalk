@@ -1,5 +1,6 @@
 package com.nwhacks.safetalk;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -40,10 +42,16 @@ public class SearchForFriend extends AppCompatActivity{
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        mAuth = FirebaseAuth.getInstance();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        Intent intent = getIntent();
+        String id = intent.getStringExtra("id");
         mDatabase = FirebaseDatabase.getInstance().getReference();
-        retrieveUser(currentUser.getUid());
+        setContentView(R.layout.activity_search_for_friend);
+        if(id != null) {
+            retrieveUser(id);
+        }else{
+            Intent launchLoginPage = new Intent(SearchForFriend.this, loginActivity.class);
+            startActivity(launchLoginPage);
+        }
     }
 
 
@@ -69,8 +77,36 @@ public class SearchForFriend extends AppCompatActivity{
             friendNames.add(friend.getName());
         }
         searchListView = findViewById(R.id.SearchList);
+        if(friends.isEmpty()){
+            popUpView = findViewById(R.id.popUp);
+            popUpView.setText("You don't have any connected friends yet!");
+            popUpView.setVisibility(View.VISIBLE);
+            return;
+        }
         adaptingLister = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, friendNames.toArray(new String[friendNames.size()]));
         searchListView.setAdapter(adaptingLister);
+        searchListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                final User user = friends.get(i);
+                popUpView = findViewById(R.id.popUp);
+                popUpView.setText("Get last known location of " + user.getName() + "?" +
+                        "This will send an SMS alerting them you are searching for them");
+                popUpView.setVisibility(View.VISIBLE);
+                Button okButton = findViewById(R.id.SearchButton);
+                okButton.setVisibility(View.VISIBLE);
+                okButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        sendSMS(searcher.getPhoneNumber(), searcher.getName() +
+                                " is searching for you." +
+                                " Hope all is well! <3 SafeTalk");
+                        popUpView.setText("Last known location: " +
+                                user.getUserLocation().getAddress());
+                    }
+                });
+            }
+        })
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
@@ -86,24 +122,6 @@ public class SearchForFriend extends AppCompatActivity{
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
             default:
-                String name = menuItem.getTitle().toString();
-                final User user = friends.get(friendNames.indexOf(name));
-                popUpView = findViewById(R.id.popUp);
-                popUpView.setText("Get last known location of " + name + "?" +
-                "This will send an SMS alerting them you are searching for them");
-                popUpView.setVisibility(1);
-                Button okButton = findViewById(R.id.SearchButton);
-                okButton.setVisibility(1);
-                okButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        sendSMS(searcher.getPhoneNumber(), searcher.getName() +
-                                " is searching for you." +
-                                " Hope all is well! <3 SafeTalk");
-                        popUpView.setText("Last known location: " +
-                        user.getUserLocation().getAddress());
-                    }
-                });
                 return super.onOptionsItemSelected(menuItem);
         }
 
