@@ -29,6 +29,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,6 +42,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
+    private FirebaseAuth mAuth;
     private User user;
     private String userId;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -50,27 +52,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{android.Manifest.permission.SEND_SMS,
-                        Manifest.permission.ACCESS_FINE_LOCATION},
-                1);
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
         Log.d("Whoops", "Whoops");
-        if (currentUser == null) {
-            Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
-            startActivity(launchSignUpPage);
-        }
         Intent intent = getIntent();
         if(intent.getExtras() == null){
             Log.d("CREATION", "null intent");
-            user = new User();
+            if(savedInstanceState == null){
+                Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
+                startActivity(launchSignUpPage);
+            }else {
+                userId = savedInstanceState.getString("id");
+                mDatabase = FirebaseDatabase.getInstance().getReference();
+                locationSetup();
+                retrieveUser();
+            }
         }else {
             userId = intent.getExtras().getString("id");
-            Log.d("CREATION", "Made it here");
             mDatabase = FirebaseDatabase.getInstance().getReference();
             locationSetup();
             retrieveUser();
+            Log.d("CREATION", userId);
+            savedInstanceState = new Bundle();
+            savedInstanceState.putString("id", userId);
         }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -98,22 +102,44 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        startLocationUpdates();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
+            startActivity(launchSignUpPage);
+        }else {
+            try {
+                startLocationUpdates();
+            }catch(RuntimeException e){
+
+            }
+        }
     }
     private void retrieveUser(){
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        Query findUser = mDatabase.child("users").orderByChild("userId").equalTo(userId);
+        findUser.addChildEventListener(new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
-                    if(messageSnapshot.getKey().equals(userId)){
-                        user = messageSnapshot.getValue(User.class);
-                        break;
-                    }
-                }
+            public void onChildAdded(DataSnapshot dataSnapshot, String string) {
+                Log.d("RETRIEVAL", "Worked");
+                user = dataSnapshot.getValue(User.class);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) { }
+            public void onCancelled(DatabaseError databaseError) {
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String string) {
+                user = dataSnapshot.getValue(User.class);
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String string) {
+            }
+
         });
     }
     @Override
@@ -155,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(MainActivity.this, "Permissions are required!", Toast.LENGTH_SHORT).show();
+                    Log.d("CREATION", "permission problems");
                     finish();
                     moveTaskToBack(true);
                 }
@@ -211,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
         }catch(SecurityException e){
             Toast.makeText(getApplicationContext(), "Enable location permissions to use" +
                     "SafeChat", Toast.LENGTH_LONG).show();
+            Log.d("CREATION", "location problems");
             finish();
             moveTaskToBack(true);
         }
@@ -219,6 +247,7 @@ public class MainActivity extends AppCompatActivity {
             public void onLocationResult(LocationResult locationResult) {
                 mDatabase.child("users").child(userId).child("userLocation")
                         .setValue(locationResult.getLastLocation());
+                user.setUserLocation(new MyLocation(locationResult.getLastLocation()));
             };
         };
         mLocationRequest = createStandardLocationRequest();
@@ -239,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendGroupSMS(User currentUser) {
         for(User friend: currentUser.getUserFriends()){
-            sendSMS(friend.getPhoneNumber(),currentUser.getUser().getDisplayName() + " is in" +
+            sendSMS(friend.getPhoneNumber(),currentUser.getName() + " is in" +
                     " need of assistance." +
                     " They are currently at " + currentUser.getUserLocation());
         }
