@@ -64,7 +64,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         //getting email and password
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
-        String name = editTextName.getText().toString().trim();
+        final String name = editTextName.getText().toString().trim();
         final String phoneNumber = editTextPhoneNumber.getText().toString().trim();
 
         if(TextUtils.isEmpty(email)) {
@@ -89,7 +89,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             //does something
                             Toast.makeText(SignUpActivity.this,"You have successfully registered!", Toast.LENGTH_LONG).show();
                             FirebaseUser fireUser = mAuth.getCurrentUser();
-                            User user = new User(fireUser, new ArrayList<User>(), phoneNumber, null);
+                            User user = new User(fireUser, new ArrayList<User>(), phoneNumber, null, name);
                             Intent launchMainPage = new Intent(SignUpActivity.this, MainActivity.class);
                             launchMainPage.putExtra("id", user.getUserId());
                             startActivity(launchMainPage);
