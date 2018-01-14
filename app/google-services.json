@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "721296351703-gmctqu31lu814i9indh5h4bglt8ans4c.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nwhacks.safetalk",
+            "certificate_hash": "5381b8fa227a1e81d5cad91af4e561aa3650cf0d"
+          }
+        },
+        {
           "client_id": "721296351703-6pfjibi9mr2olfgt8jvjpa6t4snervon.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "721296351703-6pfjibi9mr2olfgt8jvjpa6t4snervon.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2

@@ -3,12 +3,17 @@ package com.nwhacks.safetalk;
 import android.location.Location;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 public class User {
     private FirebaseUser user;
-    private Set<FirebaseUser> userFriends;
+    private String userId;
+    private Set<User> userFriends;
     private String phoneNumber;
     private Location userLocation;
 
@@ -20,18 +25,32 @@ public class User {
      * @param phoneNumber contains the phone number of the current user for texting
      * @param userLocation contains the user's current location
      */
-    public User(FirebaseUser user, Set<FirebaseUser> userFriends, String phoneNumber, Location userLocation) {
+    public User(){
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        String userId = UUID.randomUUID().toString();
+        mDatabase.child("users").child(userId).setValue(user);
+        this.userId = userId;
+        this.userFriends = new HashSet<User>();
+        this.phoneNumber = new String();
+        this.userLocation = new Location("");
+    }
+
+    public User(FirebaseUser user, Set<User> userFriends, String phoneNumber, Location userLocation) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        String userId = UUID.randomUUID().toString();
         this.user = user;
+        this.userId = userId;
         this.userFriends = userFriends;
         this.phoneNumber = phoneNumber;
         this.userLocation = userLocation;
+        mDatabase.child("users").child(userId).setValue(user);
     }
 
     public FirebaseUser getUser() {
         return user;
     }
 
-    public Set<FirebaseUser> getUserFriends() {
+    public Set<User> getUserFriends() {
         return userFriends;
     }
 
@@ -39,12 +58,14 @@ public class User {
         return phoneNumber;
     }
 
+    public String getUserId() {return userId; }
+
     public void setUser(FirebaseUser user) {
         this.user = user;
     }
 
-    public void setUserFriends(Set<FirebaseUser> userFriends) {
-        this.userFriends = userFriends;
+    public void addUserFriend(User friend) {
+        this.userFriends.add(friend);
     }
 
     public void setPhoneNumber(String phoneNumber) {
