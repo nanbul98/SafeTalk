@@ -43,6 +43,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.nwhacks.safetalk.MainActivity" />
         </activity>
+        <activity
+            android:name=".SearchForFriend"
+            android:label="@string/title_activity_search_for_friend"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.nwhacks.safetalk.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
