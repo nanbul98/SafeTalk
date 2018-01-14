@@ -29,11 +29,11 @@ public class User {
     public User(){
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String userId = UUID.randomUUID().toString();
-        mDatabase.child("users").child(userId).setValue(user);
         this.userId = userId;
         this.userFriends = new ArrayList<>();
         this.phoneNumber = new String();
         this.userLocation = new Location("");
+        mDatabase.child("users").child(userId).setValue(this);
     }
 
     public User(FirebaseUser user, List<User> userFriends, String phoneNumber, Location userLocation) {
@@ -44,6 +44,9 @@ public class User {
         this.userFriends = userFriends;
         this.phoneNumber = phoneNumber;
         this.userLocation = userLocation;
+        if(userLocation == null){
+            this.userLocation = new Location("");
+        }
         mDatabase.child("users").child(userId).setValue(this);
     }
 
