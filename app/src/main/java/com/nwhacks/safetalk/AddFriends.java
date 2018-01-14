@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +23,7 @@ public class AddFriends extends AppCompatActivity implements SearchView.OnQueryT
     private ListView search_listView;
     private String TAG = AddFriends.class.getSimpleName();
     private ArrayAdapter<String> adaptingLister;
-    private String names[];
+    private String names[] = {"Test", "another test", "oh"};
     private String locations[];
 
     @Override
@@ -48,6 +49,7 @@ public class AddFriends extends AppCompatActivity implements SearchView.OnQueryT
         setSupportActionBar(search_toolbar);
 
         ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle(R.string.app_name);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
@@ -70,5 +72,17 @@ public class AddFriends extends AppCompatActivity implements SearchView.OnQueryT
         adaptingLister.getFilter().filter(changedString);
         return true;
     }
+
+    public boolean onOptionsItemSelected(MenuItem menuItem){
+        switch (menuItem.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            default:
+                return super.onOptionsItemSelected(menuItem);
+        }
+
+    }
+
 
 }
