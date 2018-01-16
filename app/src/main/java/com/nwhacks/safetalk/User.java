@@ -7,17 +7,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class User {
-    private FirebaseUser user;
     private String userId;
+    private String email;
     private List<User> userFriends;
     private String phoneNumber;
-    private Location userLocation;
-
+    private MyLocation userLocation;
+    private String name;
 
     /**
      * Purpose: To create a new user object
@@ -27,35 +28,69 @@ public class User {
      * @param userLocation contains the user's current location
      */
     public User(){
-        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
         String userId = UUID.randomUUID().toString();
         this.userId = userId;
         this.userFriends = new ArrayList<>();
         this.phoneNumber = new String();
-        this.userLocation = new Location("");
-        mDatabase.child("users").child(userId).setValue(this);
+        this.userLocation = new MyLocation();
+        this.email = "";
+        this.name = "";
     }
 
-    public User(FirebaseUser user, List<User> userFriends, String phoneNumber, Location userLocation) {
+    public User(FirebaseUser user, List<User> userFriends, String phoneNumber, Location userLocation, String name) {
         DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
-        String userId = UUID.randomUUID().toString();
-        this.user = user;
-        this.userId = userId;
+        this.userId = user.getUid();
+        this.email = user.getEmail();
+        this.name = name;
         this.userFriends = userFriends;
+        this.userFriends.add(new User());
+        this.userFriends.get(0).setPhoneNumber("2502022408");
+        this.userFriends.get(0).setName("Nandini");
+        this.userFriends.get(0).setUserLocation(new MyLocation());
+        this.userFriends.get(0).getUserLocation().setAddress("2350 Health Sciences Mall," +
+                " Vancouver, BC V6T, Canada");
         this.phoneNumber = phoneNumber;
-        this.userLocation = userLocation;
         if(userLocation == null){
-            this.userLocation = new Location("");
+            this.userLocation = new MyLocation();
+        }else {
+            this.userLocation = new MyLocation(userLocation);
         }
-        mDatabase.child("users").child(userId).setValue(this);
+        mDatabase.child("SafeTalkUsers").child(userId).setValue(this);
     }
 
-    public FirebaseUser getUser() {
-        return user;
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+        this.name = name;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> nameUpdates = new HashMap<String, Object>();
+        nameUpdates.put("email", email);
+        mDatabase.updateChildren(nameUpdates);
+    }
+
+    public String getName() {return name;}
+
+    public void setName(String name) {
+        this.name = name;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> nameUpdates = new HashMap<String, Object>();
+        nameUpdates.put("name", name);
+        mDatabase.updateChildren(nameUpdates);
     }
 
     public List<User> getUserFriends() {
         return userFriends;
+    }
+
+    public void setUserFriends(List<User> friends) {
+        this.userFriends = friends;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> friendUpdates = new HashMap<String, Object>();
+        friendUpdates.put("userFriends", friends);
+        mDatabase.updateChildren(friendUpdates);
     }
 
     public String getPhoneNumber() {
@@ -64,19 +99,31 @@ public class User {
 
     public String getUserId() {return userId; }
 
-    public void setUser(FirebaseUser user) {
-        this.user = user;
-    }
-
     public void addUserFriend(User friend) {
+
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        if(this.userFriends.isEmpty()){
+            mDatabase.child("users").child("userFriends").setValue(this.userFriends);
+        }
         this.userFriends.add(friend);
+        mDatabase.child("users").child("userFriends").push().setValue(friend);
     }
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> phoUpdates = new HashMap<String, Object>();
+        phoUpdates.put("phoneNumber", phoneNumber);
+        mDatabase.updateChildren(phoUpdates);
     }
 
-    public Location getUserLocation() { return userLocation; }
+    public MyLocation getUserLocation() { return userLocation; }
 
-    public void setUserLocation(Location userLocation) { this.userLocation = userLocation; }
+    public void setUserLocation(MyLocation userLocation) {
+        this.userLocation = userLocation;
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        Map<String, Object> locUpdates = new HashMap<String, Object>();
+        locUpdates.put("userLocation", userLocation);
+        mDatabase.updateChildren(locUpdates);
+    }
 }

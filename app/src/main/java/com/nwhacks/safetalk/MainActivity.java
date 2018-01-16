@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,6 +23,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -29,6 +32,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -44,37 +48,40 @@ import com.google.firebase.auth.FirebaseAuth;
 public class MainActivity extends AppCompatActivity {
 
     private DatabaseReference mDatabase;
+    private FirebaseAuth mAuth;
     private User user;
     private String userId;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback callback;
     private LocationRequest mLocationRequest;
+    private AddressResultReceiver mResultReceiver;
+
+    private FloatingActionButton addFriends;
+    private FloatingActionButton searchForFriend;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActivityCompat.requestPermissions(MainActivity.this,
-                new String[]{android.Manifest.permission.SEND_SMS,
-                        Manifest.permission.ACCESS_FINE_LOCATION},
-                1);
-        final FirebaseAuth mAuth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        Log.d("Whoops", "Whoops");
-        if (currentUser == null) {
-            Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
-            startActivity(launchSignUpPage);
-        }
         Intent intent = getIntent();
         if(intent.getExtras() == null){
             Log.d("CREATION", "null intent");
-            user = new User();
+            if(savedInstanceState == null){
+                Intent launchLoginPage = new Intent(MainActivity.this, loginActivity.class);
+                startActivity(launchLoginPage);
+            }else {
+                userId = savedInstanceState.getString("id");
+                mDatabase = FirebaseDatabase.getInstance().getReference();
+                retrieveUser();
+            }
         }else {
             userId = intent.getExtras().getString("id");
-            Log.d("CREATION", "Made it here");
             mDatabase = FirebaseDatabase.getInstance().getReference();
-            locationSetup();
             retrieveUser();
+            savedInstanceState = new Bundle();
+            savedInstanceState.putString("id", userId);
         }
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -97,8 +104,17 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
                 mAuth.signOut();
                 Log.d("CREATION", "logout");
-                Intent launchSignUpPage = new Intent(MainActivity.this, SignUpActivity.class);
-                startActivity(launchSignUpPage);
+                Intent launchLoginPage = new Intent(MainActivity.this, loginActivity.class);
+                startActivity(launchLoginPage);
+            }
+        });
+        searchForFriend = findViewById(R.id.SearchForFriends);
+        searchForFriend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent launchSearchPage = new Intent(MainActivity.this, SearchForFriend.class);
+                launchSearchPage.putExtra("id", user.getUserId());
+                startActivity(launchSearchPage);
             }
         });
 >>>>>>> upstream/master
@@ -107,22 +123,32 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
-        startLocationUpdates();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser == null) {
+            Intent launchLoginPage = new Intent(MainActivity.this, loginActivity.class);
+            startActivity(launchLoginPage);
+        }else {
+            try {
+                startLocationUpdates();
+            }catch(RuntimeException e){
+
+            }
+        }
     }
     private void retrieveUser(){
-        mDatabase.addValueEventListener(new ValueEventListener() {
+        DatabaseReference ref = mDatabase.child("SafeTalkUsers").child(userId);
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
-                    if(messageSnapshot.getKey().equals(userId)){
-                        user = messageSnapshot.getValue(User.class);
-                        break;
-                    }
-                }
+                user = dataSnapshot.getValue(User.class);
+                locationSetup();
+                mResultReceiver = new AddressResultReceiver(new Handler());
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) { }
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
         });
     }
     @Override
@@ -164,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(MainActivity.this, "Permissions are required!", Toast.LENGTH_SHORT).show();
+                    Log.d("CREATION", "permission problems");
                     finish();
                     moveTaskToBack(true);
                 }
@@ -175,6 +202,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onStop(){
+        super.onStop();
+        mAuth.signOut();
+    }
     private LocationRequest createDangerLocationRequest() {
         LocationRequest mLocationRequest = new LocationRequest();
         mLocationRequest.setInterval(10000);
@@ -220,18 +252,43 @@ public class MainActivity extends AppCompatActivity {
         }catch(SecurityException e){
             Toast.makeText(getApplicationContext(), "Enable location permissions to use" +
                     "SafeChat", Toast.LENGTH_LONG).show();
+            Log.d("CREATION", "location problems");
             finish();
             moveTaskToBack(true);
         }
         callback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                mDatabase.child("users").child(userId).child("userLocation")
+                mDatabase.child("SafeTalkUsers").child(userId).child("userLocation")
                         .setValue(locationResult.getLastLocation());
+                user.setUserLocation(new MyLocation(locationResult.getLastLocation()));
+                startIntentService(locationResult.getLastLocation());
             };
         };
         mLocationRequest = createStandardLocationRequest();
     }
+
+    protected void startIntentService(Location location) {
+        Intent intent = new Intent(this, FetchAddressIntentService.class);
+        intent.putExtra(Constants.RECEIVER, mResultReceiver);
+        intent.putExtra(Constants.LOCATION_DATA_EXTRA, location);
+        startService(intent);
+    }
+
+    private class AddressResultReceiver extends ResultReceiver {
+        public AddressResultReceiver(Handler handler) {
+            super(handler);
+        }
+
+        @Override
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+
+            // Display the address string
+            // or an error message sent from the intent service.
+            user.getUserLocation().setAddress(resultData.getString(Constants.RESULT_DATA_KEY));
+        }
+    }
+
 
     private void sendSMS(String phoneNo, String msg) {
         try {
@@ -248,13 +305,22 @@ public class MainActivity extends AppCompatActivity {
 
     private void sendGroupSMS(User currentUser) {
         for(User friend: currentUser.getUserFriends()){
-            sendSMS(friend.getPhoneNumber(),currentUser.getUser().getDisplayName() + " is in" +
+            sendSMS(friend.getPhoneNumber(),currentUser.getName() + " is in" +
                     " need of assistance." +
-                    " They are currently at " + currentUser.getUserLocation());
+                    " They are currently at " + currentUser.getUserLocation().getAddress());
         }
-        sendSMS("2502022408","Braeden" + " is in" +
+        sendSMS("2502024783",currentUser.getName() + " is in" +
+
                 " need of assistance." +
-                " They are currently at " + currentUser.getUserLocation());
+                " They are currently at " + currentUser.getUserLocation().getAddress());
     }
+
+    public void onAddFriendsClick(View view){
+        Intent changeActivityIntent = new Intent(this, AddFriends.class);
+        startActivity(changeActivityIntent);
+    }
+
+
+
 
 }

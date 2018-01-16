@@ -28,6 +28,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
     private EditText editTextEmail;
     private EditText editTextPassword;
     private EditText editTextPhoneNumber;
+    private EditText editTextName;
     private Button buttonSignUp;
 
     private FirebaseAuth mAuth;
@@ -42,6 +43,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         editTextEmail = (EditText)findViewById(R.id.editTextEmail);
         editTextPassword = (EditText)findViewById(R.id.editTextPassword);
         editTextPhoneNumber = (EditText)findViewById(R.id.editTextPhoneNumber);
+        editTextName = (EditText)findViewById(R.id.editTextName);
 
         buttonSignUp = (Button)findViewById(R.id.buttonSignUp);
 
@@ -62,6 +64,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         //getting email and password
         String email = editTextEmail.getText().toString().trim();
         String password = editTextPassword.getText().toString().trim();
+        final String name = editTextName.getText().toString().trim();
         final String phoneNumber = editTextPhoneNumber.getText().toString().trim();
 
         if(TextUtils.isEmpty(email)) {
@@ -69,6 +72,10 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
         }
         if (TextUtils.isEmpty(password)) {
             Toast.makeText(this,"Please enter password", Toast.LENGTH_LONG).show();
+        }
+
+        if (TextUtils.isEmpty(name)) {
+            Toast.makeText(this,"Please enter your full name", Toast.LENGTH_LONG).show();
         }
 
 
@@ -82,7 +89,7 @@ public class SignUpActivity extends AppCompatActivity implements View.OnClickLis
                             //does something
                             Toast.makeText(SignUpActivity.this,"You have successfully registered!", Toast.LENGTH_LONG).show();
                             FirebaseUser fireUser = mAuth.getCurrentUser();
-                            User user = new User(fireUser, new ArrayList<User>(), phoneNumber, null);
+                            User user = new User(fireUser, new ArrayList<User>(), phoneNumber, null, name);
                             Intent launchMainPage = new Intent(SignUpActivity.this, MainActivity.class);
                             launchMainPage.putExtra("id", user.getUserId());
                             startActivity(launchMainPage);
